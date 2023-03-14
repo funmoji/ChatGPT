@@ -136,6 +136,7 @@ jobs:
       - name: test
         run: |
           ls ./artifacts/**/*
+          ls $pwd
       - name: Create Release
         uses: softprops/action-gh-release@master
         env:
