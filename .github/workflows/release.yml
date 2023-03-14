@@ -141,7 +141,6 @@ jobs:
         uses: softprops/action-gh-release@master
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-          PACKAGE_VERSION: ${{PACKAGE_VERSION}}
         with:
           token: ${{ secrets.MY_GITHUB_TOKEN }}
           tag_name: v${{ env.PACKAGE_VERSION }}
