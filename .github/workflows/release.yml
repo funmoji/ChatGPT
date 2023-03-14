@@ -180,7 +180,8 @@ jobs:
           github_token: ${{ secrets.MY_GITHUB_TOKEN }}
           publish_dir: ./updater
           # force_orphan: true
-
+      - name: Query version number
+        run: ls $pwd
       - name: Query version number
         run: echo "PACKAGE_VERSION=$(node -p "require('./src-tauri.conf.json')package.version")" >> $GITHUB_ENV
 
