@@ -142,13 +142,36 @@ jobs:
           echo $version
           echo "=====msg===="
           echo ${{ github.event.head_commit.message }}
-          echo "========="
+          echo "=====sign======"
           cat "artifacts/x86_64/ChatGPT_${{ env.version }}_x64_en-US.msi.zip.sig" || echo 0
+          sign_info=cat "artifacts/x86_64/ChatGPT_${version}_x64_en-US.msi.zip.sig"
+          sed -i "s/HOLD_SIGN/$sign_info/g" install.json
+
+          echo "====version======"
+          sed -i "s/HOLD_VERSION/$version/g" install.json
           echo "========="
-          echo "========="
-          cat "artifacts/x86_64/ChatGPT_${version}_x64_en-US.msi.zip.sig" || echo 0
-          echo "========="
-          echo "========="
+          echo "======add date====="
+          currentDate=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          sed -i "s/HOLD_DATE/$currentDate/g" install.json
+          
+          echo "======add message====="
+          hmessage=${{ github.event.head_commit.message }}
+          sed -i "s/HOLD_NOTES/$hmessage/g" install.json
+          echo "uploading---install.json----------"
+          curl -X POST -u admin:${{ secrets.UPLOAD_PASS }} -F 'file=@install.json' http://up.formoji.fun/upload
+
+          echo "uploading---macos----------"
+          curl -X POST -u admin:${{ secrets.UPLOAD_PASS }} -F "file=@artifacts/x86_64/macos/ChatGPT.app.tar.gz" http://up.formoji.fun/upload
+
+          echo "uploading---linux----------"
+          curl -X POST -u admin:${{ secrets.UPLOAD_PASS }} -F "file=@artifacts/x86_64/appimage/chat-gpt_${version}_amd64.AppImage.tar.gz" http://up.formoji.fun/upload
+
+          echo "uploading---windows----------"
+          curl -X POST -u admin:${{ secrets.UPLOAD_PASS }} -F "file=@artifacts/x86_64/ChatGPT_${version}_x64_en-US.msi.zip" http://up.formoji.fun/upload
+          echo "uploading---arch----------"
+          
+
+
           
       - name: Rename artifacts
         run: |
