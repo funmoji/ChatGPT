@@ -143,20 +143,22 @@ jobs:
           echo "=====msg===="
           echo ${{ github.event.head_commit.message }}
           echo "=====sign======"
-          cat "artifacts/x86_64/ChatGPT_${{ env.version }}_x64_en-US.msi.zip.sig" || echo 0
-          sign_info=cat "artifacts/x86_64/ChatGPT_${version}_x64_en-US.msi.zip.sig"
+          export sign_info=$(cat "artifacts/x86_64/ChatGPT_${version}_x64_en-US.msi.zip.sig")
+          echo $sign_info
           sed -i "s/HOLD_SIGN/$sign_info/g" install.json
 
           echo "====version======"
           sed -i "s/HOLD_VERSION/$version/g" install.json
           echo "========="
           echo "======add date====="
-          currentDate=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          export currentDate=$(date -u +%Y-%m-%dT%H:%M:%SZ)
           sed -i "s/HOLD_DATE/$currentDate/g" install.json
           
           echo "======add message====="
-          hmessage=${{ github.event.head_commit.message }}
+          export hmessage=${{ github.event.head_commit.message }}
           sed -i "s/HOLD_NOTES/$hmessage/g" install.json
+
+          
           echo "uploading---install.json----------"
           curl -X POST -u admin:${{ secrets.UPLOAD_PASS }} -F 'file=@install.json' http://up.formoji.fun/upload
 
