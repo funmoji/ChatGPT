@@ -1,0 +1,23 @@
+{
+    "version": "v{{ PACKAGE_VERSION }}",
+    "notes": `echo ${{ github.event.head_commit.message }}`,
+    "pub_date": echo $(date +"%Y-%m-%d %H:%M:%S"),
+    "platforms": {
+      "darwin-x86_64": {
+        "signature": "",
+        "url": "https://formoji.fun/img/chat/chat_{{ PACKAGE_VERSION }}.app.tar.gz"
+      },
+      "darwin-aarch64": {
+        "signature": "",
+        "url": "https://formoji.fun/img/chat/chat_{{ PACKAGE_VERSION }}.app.tar.gz"
+      },
+      "linux-x86_64": {
+        "signature": "",
+        "url": "https://formoji.fun/img/chat/chat_{{ PACKAGE_VERSION }}.AppImage.tar.gz"
+      },
+      "windows-x86_64": {
+        "signature": "",
+        "url": "https://formoji.fun/img/chat/chat_{{ PACKAGE_VERSION }}_x64_en-US.msi.zip"
+      }
+    }
+  }
