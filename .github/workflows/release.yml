@@ -2,8 +2,8 @@ name: Release CI
 
 on:
   push:
-    branches:
-      - master
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
 jobs:
   build-chatgpt:
@@ -77,7 +77,7 @@ jobs:
 
       - run: pnpm build --target ${{ matrix.target }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
 
@@ -132,11 +132,26 @@ jobs:
 
       - name: Rename artifacts
         run: |
-          ls ./artifacts/**/*
+          mv "artifacts/aarch64/dmg/ChatGPT_${{ env.version }}_aarch64.dmg" "artifacts/ChatGPT_${{ env.version }}_macos_aarch64.dmg"
+          mv "artifacts/aarch64/macos/ChatGPT.app.tar.gz" "artifacts/ChatGPT_${{ env.version }}_macos_aarch64.app.tar.gz"
+          mv "artifacts/aarch64/macos/ChatGPT.app.tar.gz.sig" "artifacts/ChatGPT_${{ env.version }}_macos_aarch64.app.tar.gz.sig"
+
+          mv "artifacts/x86_64/dmg/ChatGPT_${{ env.version }}_x64.dmg" "artifacts/ChatGPT_${{ env.version }}_macos_x86_64.dmg"
+          mv "artifacts/x86_64/macos/ChatGPT.app.tar.gz" "artifacts/ChatGPT_${{ env.version }}_macos_x86_64.app.tar.gz"
+          mv "artifacts/x86_64/macos/ChatGPT.app.tar.gz.sig" "artifacts/ChatGPT_${{ env.version }}_macos_x86_64.app.tar.gz.sig"
+
+          mv "artifacts/x86_64/deb/chat-gpt_${{ env.version }}_amd64.deb" "artifacts/x86_64/deb/ChatGPT_${{ env.version }}_linux_x86_64.deb"
+          mv "artifacts/x86_64/appimage/chat-gpt_${{ env.version }}_amd64.AppImage.tar.gz" "artifacts/ChatGPT_${{ env.version }}_linux_x86_64.AppImage.tar.gz"
+          mv "artifacts/x86_64/appimage/chat-gpt_${{ env.version }}_amd64.AppImage.tar.gz.sig" "artifacts/ChatGPT_${{ env.version }}_linux_x86_64.AppImage.tar.gz.sig"
+
+          mv "artifacts/x86_64/ChatGPT_${{ env.version }}_x64_en-US.msi" "artifacts/ChatGPT_${{ env.version }}_windows_x86_64.msi"
+          mv "artifacts/x86_64/ChatGPT_${{ env.version }}_x64_en-US.msi.zip" "artifacts/ChatGPT_${{ env.version }}_windows_x86_64.msi.zip"
+          mv "artifacts/x86_64/ChatGPT_${{ env.version }}_x64_en-US.msi.zip.sig" "artifacts/ChatGPT_${{ env.version }}_windows_x86_64.msi.zip.sig"
+
       - name: Create Release
         uses: softprops/action-gh-release@master
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
           tag_name: v${{ env.version }}
           name: ChatGPT v${{ env.version }}
@@ -167,12 +182,12 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Updater JSON
-        run: pnpm updater --token=${{ secrets.GITHUB_TOKEN }}
+        run: pnpm updater --token=${{ secrets.MY_GITHUB_TOKEN }}
 
       - name: Deploy install.json
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.MY_GITHUB_TOKEN }}
           publish_dir: ./updater
           # force_orphan: true
 
